@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace justAsk.Models
@@ -12,7 +13,14 @@ namespace justAsk.Models
         [MaxLength(1000)]
         public string Description { get; set; }
 
-
+        //Creator
         public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
+
+        //Answers
+        public List<Answer> Answers { get; set; }
+
+        //Karma
+        public int Karma { get; set; }
     }
 }

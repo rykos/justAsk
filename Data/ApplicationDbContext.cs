@@ -10,5 +10,7 @@ namespace justAsk.Data
         { }
 
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<Vote> Votes { get; set; }
     }
 }

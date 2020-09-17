@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using justAsk.Controllers;
 
 namespace justAsk
 {
@@ -49,6 +50,10 @@ namespace justAsk
                 };
             });
 
+            //Personal services
+            services.AddScoped<UserHelperProvider, UserHelper>();
+            //
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -80,7 +85,7 @@ namespace justAsk
 
 
             app.UseRouting();
-            
+
             app.UseAuthentication();
             app.UseAuthorization();
 
