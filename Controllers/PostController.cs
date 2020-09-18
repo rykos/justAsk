@@ -46,6 +46,28 @@ namespace justAsk.Controllers
             return Created($"api/post/{dbPost.Id}", dbPost);
         }
 
+        public async Task<IActionResult> CreateAnswer([FromBody] Answer answer)
+        {
+            ApplicationUser user = await this.userHelper.GetApplicationUser(this.User);
+            if (user == default)
+            {
+                return Unauthorized();
+            }
+
+            Post post = this.dbContext.Posts.FirstOrDefault(p => p.Id == answer.PostId);
+            if (post == default)
+            {
+                return NotFound();
+            }
+
+            answer.Post = post;
+            this.dbContext.Answers.Add(answer);
+
+            this.dbContext.SaveChanges();
+
+            return Ok(answer);
+        }
+
         [HttpGet]
         [Route("vote/post")]
         public async Task<IActionResult> VotePost(int id, string state)
@@ -88,6 +110,50 @@ namespace justAsk.Controllers
             dbContext.SaveChanges();
 
             return Ok(new { id = vote.Id, newKarma = post.Karma });
+        }
+
+        [HttpGet]
+        [Route("vote/answer")]
+        public async Task<IActionResult> VoteAnswer(int id, string state)
+        {
+            VoteState newVoteState;
+            if (!Enum.TryParse<VoteState>(state, out newVoteState))
+            {
+                return BadRequest(new Response() { Status = "Error", Message = "Bad vote state" });
+            }
+
+            Answer answer = this.dbContext.Answers.FirstOrDefault(x => x.Id == id);
+            if (answer == default)
+            {
+                return NotFound();
+            }
+
+            ApplicationUser user = await this.userHelper.GetApplicationUser(this.User);
+            if (user == default)
+            {
+                return Unauthorized();
+            }
+
+            Vote vote = dbContext.Votes.FirstOrDefault(v => v.ContentId == id && v.ApplicationUserId == user.Id);
+            dbContext.Answers.Update(answer);
+            if (vote == default)//new vote
+            {
+                vote = new Vote() { ContentId = id, State = newVoteState, ApplicationUserId = user.Id, ApplicationUser = user };
+                dbContext.Votes.Add(vote);//add new vote to database
+                answer.Karma += VoteValue(newVoteState);//Update post karma score
+            }
+            else//Change vote
+            {
+                if (vote.State != newVoteState)//Different vote
+                {
+                    dbContext.Votes.Update(vote);
+                    answer.Karma += VoteValue(newVoteState) - VoteValue(vote.State);//Subtracts old vote and adds new vote value
+                    vote.State = newVoteState;//Updates vote state
+                }
+            }
+            dbContext.SaveChanges();
+
+            return Ok(new { id = vote.Id, newKarma = answer.Karma });
         }
 
         public int VoteValue(VoteState vote)
