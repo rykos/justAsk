@@ -9,7 +9,7 @@ using justAsk.Data;
 namespace justAsk.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200917170841_init")]
+    [Migration("20200918151028_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

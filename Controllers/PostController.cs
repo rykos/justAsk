@@ -30,6 +30,20 @@ namespace justAsk.Controllers
             return this.dbContext.Posts.AsNoTracking().ToArray();
         }
 
+
+        [HttpGet]
+        [Route("{id}")]
+        [AllowAnonymous]
+        public Post GetPost(int id)
+        {
+            Post post = this.dbContext.Posts.AsNoTracking().FirstOrDefault(p => p.Id == id);
+            if (post != default)
+            {
+                post.Answers = this.dbContext.Answers.Where(a => a.PostId == id).ToList();
+            }
+            return post;
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromBody] Post post)
         {
@@ -46,6 +60,8 @@ namespace justAsk.Controllers
             return Created($"api/post/{dbPost.Id}", dbPost);
         }
 
+        [HttpPost]
+        [Route("answer")]
         public async Task<IActionResult> CreateAnswer([FromBody] Answer answer)
         {
             ApplicationUser user = await this.userHelper.GetApplicationUser(this.User);
@@ -60,12 +76,13 @@ namespace justAsk.Controllers
                 return NotFound();
             }
 
+            answer.ApplicationUserId = user.Id;
             answer.Post = post;
             this.dbContext.Answers.Add(answer);
 
             this.dbContext.SaveChanges();
 
-            return Ok(answer);
+            return Ok(new { id = answer.Id, content = answer.Content, postId = answer.PostId });
         }
 
         [HttpGet]

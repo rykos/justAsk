@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="login-container">
+        <div id="output"></div>
+        <div class="form-box">
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
+                <input formControlName="email" name="email" type="email" placeholder="email">
+                <input formControlName="username" name="user" type="text" placeholder="username">
+                <input formControlName="password" type="password" placeholder="password">
+                <button class="btn btn-info btn-block login" type="submit">Register</button>
+            </form>
+            <a routerLink="/login"><button class="btn btn-block"
+                    style="background-color: rgb(198, 204, 119);">Login</button></a>
+        </div>
+    </div>
+</div>
