@@ -22,6 +22,17 @@ export class AuthenticationService {
     return this.currentUserSubject.value;
   }
 
+  register(username: string, password: string) {
+    return this.httpClient.post(`${environment.apiUrl}/register`, { username, password }).subscribe(
+      user => {
+        console.log("user created");
+        this.login(username, password).subscribe(
+          x => { this.router.navigate(['/']) }
+        );
+      }
+    );
+  }
+
   login(username: string, password: string) {
     return this.httpClient.post<User>(`${environment.apiUrl}/login`, { username, password }).pipe(map(user => {
       localStorage.setItem('currentUser', JSON.stringify(user))
@@ -33,5 +44,6 @@ export class AuthenticationService {
   logout() {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+    location.reload();
   }
 }

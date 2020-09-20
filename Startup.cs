@@ -28,6 +28,14 @@ namespace justAsk
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "AllowOrigins", builder =>
+                {
+                    builder.WithOrigins("https://localhost:4200", "http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+                });
+            });
+
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=justAsk.db"));
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
@@ -85,6 +93,8 @@ namespace justAsk
 
 
             app.UseRouting();
+
+            app.UseCors("AllowOrigins");
 
             app.UseAuthentication();
             app.UseAuthorization();
