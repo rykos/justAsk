@@ -2,8 +2,10 @@
     <div class="navbar container">
         <a class="navbar-brand" href="#">JustAsk!</a>
         <div>
-            <button *ngIf="!loggedIn" class="btn btn-outline-success my-2 my-sm-0" type="submit" routerLink="/login">Login</button>
-            <button *ngIf="loggedIn" class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="logout();">Logout</button>
+            <button *ngIf="!user" class="btn btn-outline-success my-2 my-sm-0" type="submit" routerLink="/login">Login</button>
+            <button *ngIf="user" class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="logout();">Logout</button>
+            <!-- user avatar, placeholder for now -->
+            <img *ngIf="user" src="/assets/favicon.ico" height="100%" class="mx-1">
         </div>
     </div>
 </nav>

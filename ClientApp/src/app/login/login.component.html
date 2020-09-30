@@ -1,6 +1,8 @@
 <div class="container">
-    <div *ngIf="error" class="alert alert-danger" role="alert">
-        {{error}}
+    <div class="d-flex">
+        <div *ngIf="error" class="alert alert-danger m-auto" role="alert">
+            {{error}}
+        </div>
     </div>
     <div class="login-container">
         <div class="avatar"
